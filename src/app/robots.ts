@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/"],
     },
-    sitemap: "https://compuservicessoft.com/sitemap.xml",
+    sitemap: "https://www.compuservicessoft.com/sitemap.xml",
   };
 }

@@ -118,15 +118,15 @@ export function miniatura(ruta: string | null | undefined, ancho = 400): string 
 
 /* ─── Cabecera y categorías ──────────────────────────────────────────────── */
 
-async function pedirCabecera(): Promise<CatalogoZentivy> {
-  const res = await fetch(CATALOGO, { next: { revalidate: TTL_CABECERA } });
+async function pedirCabecera(ttl = TTL_CABECERA): Promise<CatalogoZentivy> {
+  const res = await fetch(CATALOGO, { next: { revalidate: ttl } });
   if (!res.ok) throw new Error(`Catálogo no disponible (${res.status})`);
   return res.json();
 }
 
 /** Cabecera del negocio: nombre, logo, ciudad, teléfono, horario y categorías. */
-export async function getCatalogo(): Promise<Catalogo> {
-  const c = await pedirCabecera();
+export async function getCatalogo(ttl?: number): Promise<Catalogo> {
+  const c = await pedirCabecera(ttl);
   return {
     nombre: c.nombre ?? "",
     logoUrl: c.logoUrl ?? null,
@@ -143,8 +143,10 @@ export async function getCatalogo(): Promise<Catalogo> {
  * Categorías publicables. Zentivy las entrega dentro de la cabecera —son las que
  * tienen al menos un producto visible—, así que no hay una consulta aparte.
  */
-export async function getCategorias(): Promise<Categoria[]> {
-  const { categorias } = await getCatalogo();
+/** `ttl` alarga la caché de la llamada, para quien no necesita datos tan frescos
+    (el sitemap, el PDF). Ver la nota de `ttl` en `getTodosLosProductos`. */
+export async function getCategorias(ttl?: number): Promise<Categoria[]> {
+  const { categorias } = await getCatalogo(ttl);
   return categorias.map((c) => ({ id: c.id, nombre: c.nombre }));
 }
 
@@ -230,7 +232,9 @@ async function pedirProductos({
      de cada producto, y su caché es larga (casi siempre no cuesta una llamada). */
   const [res, cabecera] = await Promise.all([
     fetch(`${CATALOGO}/productos?${params}`, { next: { revalidate: ttl } }),
-    getCatalogo(),
+    /* La cabecera con el mismo ttl: si se quedara en su TTL corto, Next tomaria
+       el mas bajo de los dos y el `revalidate` que pidio la ruta no serviria. */
+    getCatalogo(ttl),
   ]);
   if (!res.ok) throw new Error(`Error al obtener productos (${res.status})`);
 

@@ -26,18 +26,18 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Diseño y Desarrollo de Páginas Web en Pasto",
     description: "Impulsa tus ventas en Pasto, Nariño con una página web o tienda online rápida, moderna y lista para SEO. Cotiza sin costo hoy mismo.",
-    url: "https://compuservicessoft.com/desarrollo-web",
+    url: "https://www.compuservicessoft.com/desarrollo-web",
     type: "website",
     images: [
       {
-        url: "https://compuservicessoft.com/imagenes/local.webp",
+        url: "https://www.compuservicessoft.com/imagenes/local.webp",
         width: 1200,
         height: 630,
         alt: "Servicios de Desarrollo de Páginas Web en Pasto, Nariño",
       },
     ],
   },
-  alternates: { canonical: "https://compuservicessoft.com/desarrollo-web" },
+  alternates: { canonical: "https://www.compuservicessoft.com/desarrollo-web" },
 };
 
 /* ─── Íconos inline ────────────────────────────────────────────────── */
@@ -271,8 +271,8 @@ export default function DesarrolloWebPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://compuservicessoft.com" },
-      { "@type": "ListItem", "position": 2, "name": "Desarrollo Web", "item": "https://compuservicessoft.com/desarrollo-web" },
+      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.compuservicessoft.com" },
+      { "@type": "ListItem", "position": 2, "name": "Desarrollo Web", "item": "https://www.compuservicessoft.com/desarrollo-web" },
     ]
   };
 

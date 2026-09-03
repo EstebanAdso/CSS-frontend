@@ -24,16 +24,16 @@ export const metadata: Metadata = {
     "desarrollo web a medida Nariño",
     "aplicaciones empresariales Pasto",
   ],
-  alternates: { canonical: "https://compuservicessoft.com/desarrollo-web/software-a-la-medida" },
+  alternates: { canonical: "https://www.compuservicessoft.com/desarrollo-web/software-a-la-medida" },
   openGraph: {
     title: "Software a la Medida en Pasto — CompuServicesSoft",
     description:
       "Desarrollamos sistemas web, ERP, CRM y aplicaciones a la medida para tu negocio en Pasto. Análisis de requerimientos, desarrollo profesional y soporte continuo.",
-    url: "https://compuservicessoft.com/desarrollo-web/software-a-la-medida",
+    url: "https://www.compuservicessoft.com/desarrollo-web/software-a-la-medida",
     type: "website",
     images: [
       {
-        url: "https://compuservicessoft.com/imagenes/local.webp",
+        url: "https://www.compuservicessoft.com/imagenes/local.webp",
         width: 1200,
         height: 630,
         alt: "Software a la Medida en Pasto — CompuServicesSoft",
@@ -123,7 +123,7 @@ export default function SoftwareALaMedidaPage() {
       },
     },
     areaServed: { "@type": "City", name: "Pasto" },
-    url: "https://compuservicessoft.com/desarrollo-web/software-a-la-medida",
+    url: "https://www.compuservicessoft.com/desarrollo-web/software-a-la-medida",
   };
 
   const schemaFAQ = {
@@ -140,9 +140,9 @@ export default function SoftwareALaMedidaPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://compuservicessoft.com" },
-      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://compuservicessoft.com/desarrollo-web" },
-      { "@type": "ListItem", position: 3, name: "Software a la Medida", item: "https://compuservicessoft.com/desarrollo-web/software-a-la-medida" },
+      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://www.compuservicessoft.com" },
+      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://www.compuservicessoft.com/desarrollo-web" },
+      { "@type": "ListItem", position: 3, name: "Software a la Medida", item: "https://www.compuservicessoft.com/desarrollo-web/software-a-la-medida" },
     ],
   };
 

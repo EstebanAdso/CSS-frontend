@@ -30,14 +30,15 @@ function formatPrecio(valor: number): string {
   }).format(valor);
 }
 
-/* Busca la categoría por slug */
+/* Busca la categoría por slug.
+   No atrapa los fallos de la API a proposito: `null` tiene que significar "no
+   existe" y nada mas. Si un timeout de Zentivy tambien devolviera `null`, un
+   corte de treinta segundos le serviria a Googlebot un `noindex` sobre paginas
+   que existen —y ese noindex se queda—. Dejando pasar la excepcion, Next
+   responde 500 y Google reintenta, que es lo correcto ante un fallo temporal. */
 async function resolverCategoria(catSlug: string): Promise<Categoria | null> {
-  try {
-    const categorias = await getCategorias();
-    return categorias.find((c) => slugify(c.nombre) === catSlug) ?? null;
-  } catch {
-    return null;
-  }
+  const categorias = await getCategorias();
+  return categorias.find((c) => slugify(c.nombre) === catSlug) ?? null;
 }
 
 /* Busca el producto por slug dentro de la categoría */
@@ -48,16 +49,12 @@ async function resolverProducto(
   const categoria = await resolverCategoria(catSlug);
   if (!categoria) return null;
 
-  try {
-    /* Todas las páginas de la categoría: el servidor no entrega más de 48 por llamada, y
-       un producto en el puesto 49 quedaría con su ficha en 404 sin que nada lo avise. */
-    const productos = await getTodosPorCategoria(categoria.id);
-    const producto = productos.find((p) => slugify(p.nombre) === prodSlug);
-    if (!producto) return null;
-    return { producto, categoria };
-  } catch {
-    return null;
-  }
+  /* Todas las páginas de la categoría: el servidor no entrega más de 48 por llamada, y
+     un producto en el puesto 49 quedaría con su ficha en 404 sin que nada lo avise. */
+  const productos = await getTodosPorCategoria(categoria.id);
+  const producto = productos.find((p) => slugify(p.nombre) === prodSlug);
+  if (!producto) return null;
+  return { producto, categoria };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -69,7 +66,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const [catSlug, prodSlug] = path;
   const resultado = await resolverProducto(catSlug, prodSlug);
   if (!resultado) {
-    /* Producto no encontrado: usar noindex para no indexar páginas de productos inactivos */
+    /* Producto que ya no está en el catálogo. Aquí el noindex sí corresponde: la
+       URL sigue viva mostrando alternativas, pero no queremos que Google indexe
+       una ficha sin producto. Llegar hasta acá significa que la API respondió
+       bien y el producto no estaba —un fallo de red habría lanzado antes—. */
     return {
       title: "Producto no disponible | CompuServicesSoft",
       robots: { index: false, follow: true },
@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const titulo = `${producto.nombre} — ${producto.categoria.nombre} en Pasto | CompuServicesSoft`;
   const descripcion = `Compra ${producto.nombre} en Pasto, Nariño al mejor precio. ${producto.descripcion ?? ""} Disponible en CompuServicesSoft, CC San Agustín Local 224A. ¡Pregunta por WhatsApp!`.trim();
   const imagen = resolverImagen(producto.imagen);
-  const canonicalUrl = `https://compuservicessoft.com${urlProducto(producto.nombre, producto.categoria.nombre)}`;
+  const canonicalUrl = `https://www.compuservicessoft.com${urlProducto(producto.nombre, producto.categoria.nombre)}`;
 
   /* Generar keywords optimizadas con sinónimos */
   const keywords = generateProductKeywords(
@@ -208,7 +208,7 @@ export default async function CatalogoPathPage({ params }: Props) {
     },
     offers: {
       "@type": "Offer",
-      url: `https://compuservicessoft.com${urlProducto(producto.nombre, producto.categoria.nombre)}`,
+      url: `https://www.compuservicessoft.com${urlProducto(producto.nombre, producto.categoria.nombre)}`,
       priceCurrency: "COP",
       price: String(producto.precioVendido),   // string evita que Google asuma USD
       availability: "https://schema.org/InStock",   // el catálogo solo publica productos disponibles
@@ -240,25 +240,25 @@ export default async function CatalogoPathPage({ params }: Props) {
         "@type": "ListItem",
         "position": 1,
         "name": "Inicio",
-        "item": "https://compuservicessoft.com"
+        "item": "https://www.compuservicessoft.com"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Catálogo",
-        "item": "https://compuservicessoft.com/catalogo"
+        "item": "https://www.compuservicessoft.com/catalogo"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": producto.categoria.nombre,
-        "item": `https://compuservicessoft.com${urlCat}`
+        "item": `https://www.compuservicessoft.com${urlCat}`
       },
       {
         "@type": "ListItem",
         "position": 4,
         "name": producto.nombre,
-        "item": `https://compuservicessoft.com${urlProducto(producto.nombre, producto.categoria.nombre)}`
+        "item": `https://www.compuservicessoft.com${urlProducto(producto.nombre, producto.categoria.nombre)}`
       }
     ]
   };

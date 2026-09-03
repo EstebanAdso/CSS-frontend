@@ -24,16 +24,16 @@ export const metadata: Metadata = {
     "plataforma e-commerce Pasto",
     "tienda online Colombia",
   ],
-  alternates: { canonical: "https://compuservicessoft.com/desarrollo-web/tienda-online-ecommerce" },
+  alternates: { canonical: "https://www.compuservicessoft.com/desarrollo-web/tienda-online-ecommerce" },
   openGraph: {
     title: "Tienda Online y E-commerce en Pasto — CompuServicesSoft",
     description:
       "Crea tu tienda virtual profesional y vende tus productos por internet las 24 horas. Pasarela de pago, envíos y catálogo incluidos. Estamos en Pasto, Nariño.",
-    url: "https://compuservicessoft.com/desarrollo-web/tienda-online-ecommerce",
+    url: "https://www.compuservicessoft.com/desarrollo-web/tienda-online-ecommerce",
     type: "website",
     images: [
       {
-        url: "https://compuservicessoft.com/imagenes/local.webp",
+        url: "https://www.compuservicessoft.com/imagenes/local.webp",
         width: 1200,
         height: 630,
         alt: "Tienda Online y E-commerce en Pasto — CompuServicesSoft",
@@ -131,7 +131,7 @@ export default function TiendaOnlineEcommercePage() {
       },
     },
     areaServed: { "@type": "City", name: "Pasto" },
-    url: "https://compuservicessoft.com/desarrollo-web/tienda-online-ecommerce",
+    url: "https://www.compuservicessoft.com/desarrollo-web/tienda-online-ecommerce",
   };
 
   const schemaFAQ = {
@@ -148,9 +148,9 @@ export default function TiendaOnlineEcommercePage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://compuservicessoft.com" },
-      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://compuservicessoft.com/desarrollo-web" },
-      { "@type": "ListItem", position: 3, name: "Tienda Online", item: "https://compuservicessoft.com/desarrollo-web/tienda-online-ecommerce" },
+      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://www.compuservicessoft.com" },
+      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://www.compuservicessoft.com/desarrollo-web" },
+      { "@type": "ListItem", position: 3, name: "Tienda Online", item: "https://www.compuservicessoft.com/desarrollo-web/tienda-online-ecommerce" },
     ],
   };
 

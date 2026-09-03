@@ -24,16 +24,16 @@ export const metadata: Metadata = {
     "diseño landing page Pasto",
     "crear landing page Pasto",
   ],
-  alternates: { canonical: "https://compuservicessoft.com/desarrollo-web/landing-page" },
+  alternates: { canonical: "https://www.compuservicessoft.com/desarrollo-web/landing-page" },
   openGraph: {
     title: "Landing Pages en Pasto | Páginas de Aterrizaje que Convierten — CompuServicesSoft",
     description:
       "Landing pages profesionales para tu negocio en Pasto. Diseño moderno, optimizadas para conversión, con formulario y WhatsApp. Entrega en 5-7 días hábiles.",
-    url: "https://compuservicessoft.com/desarrollo-web/landing-page",
+    url: "https://www.compuservicessoft.com/desarrollo-web/landing-page",
     type: "website",
     images: [
       {
-        url: "https://compuservicessoft.com/imagenes/local.webp",
+        url: "https://www.compuservicessoft.com/imagenes/local.webp",
         width: 1200,
         height: 630,
         alt: "Landing Pages en Pasto — CompuServicesSoft",
@@ -135,7 +135,7 @@ export default function LandingPagePage() {
       },
     },
     areaServed: { "@type": "City", name: "Pasto" },
-    url: "https://compuservicessoft.com/desarrollo-web/landing-page",
+    url: "https://www.compuservicessoft.com/desarrollo-web/landing-page",
   };
 
   const schemaFAQ = {
@@ -152,9 +152,9 @@ export default function LandingPagePage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://compuservicessoft.com" },
-      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://compuservicessoft.com/desarrollo-web" },
-      { "@type": "ListItem", position: 3, name: "Landing Page", item: "https://compuservicessoft.com/desarrollo-web/landing-page" },
+      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://www.compuservicessoft.com" },
+      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://www.compuservicessoft.com/desarrollo-web" },
+      { "@type": "ListItem", position: 3, name: "Landing Page", item: "https://www.compuservicessoft.com/desarrollo-web/landing-page" },
     ],
   };
 

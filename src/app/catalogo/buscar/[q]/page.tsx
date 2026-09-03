@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const termino = q.replace(/-/g, " ");
   const titulo = `${termino} en Pasto — Búsqueda | CompuServicesSoft Nariño`;
   const descripcion = `Resultados de búsqueda para "${termino}" en Pasto, Nariño. Encuentra ${termino} y más componentes de computador en CompuServicesSoft. Tienda en CC San Agustín Local 224A, Pasto.`;
-  const canonical = `https://compuservicessoft.com${urlBusqueda(termino)}`;
+  const canonical = `https://www.compuservicessoft.com${urlBusqueda(termino)}`;
 
   return {
     title: titulo,

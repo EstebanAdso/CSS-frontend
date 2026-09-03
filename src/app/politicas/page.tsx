@@ -19,10 +19,10 @@ export const metadata: Metadata = {
     title: "Políticas de Garantía y Devolución | CompuServicesSoft Pasto",
     description:
       "Garantía hasta 4 meses y devoluciones en 30 días para productos con defecto de fábrica. CompuServicesSoft, CC San Agustín Local 224A, Pasto.",
-    url: "https://compuservicessoft.com/politicas",
+    url: "https://www.compuservicessoft.com/politicas",
     type: "website",
   },
-  alternates: { canonical: "https://compuservicessoft.com/politicas" },
+  alternates: { canonical: "https://www.compuservicessoft.com/politicas" },
 };
 
 const secciones = [

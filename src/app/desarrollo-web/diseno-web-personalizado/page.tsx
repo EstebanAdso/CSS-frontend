@@ -24,16 +24,16 @@ export const metadata: Metadata = {
     "maquetación web Pasto",
     "diseño UX UI Pasto",
   ],
-  alternates: { canonical: "https://compuservicessoft.com/desarrollo-web/diseno-web-personalizado" },
+  alternates: { canonical: "https://www.compuservicessoft.com/desarrollo-web/diseno-web-personalizado" },
   openGraph: {
     title: "Diseño Web Personalizado en Pasto — CompuServicesSoft",
     description:
       "Páginas web diseñadas a tu medida con los colores de tu marca. Diseño moderno, responsive y listo para vender. Estamos en Pasto, Nariño.",
-    url: "https://compuservicessoft.com/desarrollo-web/diseno-web-personalizado",
+    url: "https://www.compuservicessoft.com/desarrollo-web/diseno-web-personalizado",
     type: "website",
     images: [
       {
-        url: "https://compuservicessoft.com/imagenes/local.webp",
+        url: "https://www.compuservicessoft.com/imagenes/local.webp",
         width: 1200,
         height: 630,
         alt: "Diseño Web Personalizado en Pasto — CompuServicesSoft",
@@ -119,7 +119,7 @@ export default function DisenoWebPersonalizadoPage() {
       },
     },
     areaServed: { "@type": "City", name: "Pasto" },
-    url: "https://compuservicessoft.com/desarrollo-web/diseno-web-personalizado",
+    url: "https://www.compuservicessoft.com/desarrollo-web/diseno-web-personalizado",
   };
 
   const schemaFAQ = {
@@ -136,9 +136,9 @@ export default function DisenoWebPersonalizadoPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://compuservicessoft.com" },
-      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://compuservicessoft.com/desarrollo-web" },
-      { "@type": "ListItem", position: 3, name: "Diseño Web Personalizado", item: "https://compuservicessoft.com/desarrollo-web/diseno-web-personalizado" },
+      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://www.compuservicessoft.com" },
+      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://www.compuservicessoft.com/desarrollo-web" },
+      { "@type": "ListItem", position: 3, name: "Diseño Web Personalizado", item: "https://www.compuservicessoft.com/desarrollo-web/diseno-web-personalizado" },
     ],
   };
 

@@ -1,61 +1,28 @@
 /**
- * Reusable helper that collects every public URL of the site and submits
- * them all to IndexNow in a single batch call.
+ * Reúne todas las URLs públicas del sitio y las envía a IndexNow en un solo lote.
  *
- * Call this from:
- *  - A deploy webhook (POST /api/indexnow-deploy)
- *  - A CI/CD pipeline after `next build`
- *  - Manually via `node -e "require('./src/lib/indexnow-sitemap').submitAllUrls()"`
+ * Se llama desde:
+ *  - El webhook de despliegue (POST /api/indexnow-deploy)
+ *  - El workflow de GitHub Actions, después de cada deploy a producción
  */
 
 import { submitUrls } from "@/lib/indexnow";
-import { getCategorias } from "@/lib/api";
-
-const BASE = "https://www.compuservicessoft.com";
-
-/** All static page URLs — keep in sync with src/app/sitemap.ts */
-const STATIC_URLS: string[] = [
-  `${BASE}/`,
-  `${BASE}/desarrollo-web`,
-  `${BASE}/desarrollo-web/diseno-web-personalizado`,
-  `${BASE}/desarrollo-web/seo-posicionamiento-web-pasto`,
-  `${BASE}/desarrollo-web/tienda-online-ecommerce`,
-  `${BASE}/desarrollo-web/landing-page`,
-  `${BASE}/desarrollo-web/software-a-la-medida`,
-  `${BASE}/catalogo`,
-  `${BASE}/armar-pc-gamer`,
-  `${BASE}/politicas`,
-];
+import sitemap from "@/app/sitemap";
 
 /**
- * Fetches dynamic URLs from the API (categories + products) and submits
- * all URLs — static + dynamic — to IndexNow.
+ * Las URLs salen del sitemap, no de una lista propia.
+ *
+ * Antes este archivo tenía su propia copia de las páginas estáticas con un
+ * comentario que pedía "mantener en sync con src/app/sitemap.ts", y además solo
+ * agregaba categorías: los ~370 productos nunca entraban al lote, pese a que el
+ * encabezado decía "categories + products". Bing solo podía descubrir las fichas
+ * rastreando por su cuenta, que es exactamente lo que IndexNow existe para
+ * evitar.
+ *
+ * Leyendo del sitemap hay una sola definición de "qué páginas son públicas", así
+ * que las dos listas no pueden volver a separarse.
  */
 export async function submitAllUrls(): Promise<void> {
-  const dynamicUrls: string[] = [];
-
-  /* Categories come from the Zentivy public catalog (see src/lib/api.ts) */
-  try {
-    const categorias = await getCategorias();
-    categorias.forEach((cat) => {
-      dynamicUrls.push(`${BASE}/catalogo/categoria/${slugify(cat.nombre)}`);
-    });
-  } catch (err) {
-    console.warn("[IndexNow] Could not fetch categories:", err);
-  }
-
-  const all = [...STATIC_URLS, ...dynamicUrls];
-  await submitUrls(all);
-}
-
-/** Minimal slug helper — mirrors src/lib/utils.ts */
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^\w\s-]/g, "")
-    .trim()
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-");
+  const paginas = await sitemap();
+  await submitUrls(paginas.map((p) => p.url));
 }

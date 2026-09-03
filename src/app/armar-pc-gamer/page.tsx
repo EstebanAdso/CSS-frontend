@@ -30,10 +30,10 @@ export const metadata: Metadata = {
     title: "Arma tu PC Gamer en Pasto | CompuServicesSoft Nariño",
     description:
       "Cotiza tu PC gamer ideal con nuestro configurador. Asesoría gratis en Pasto, Nariño.",
-    url: "https://compuservicessoft.com/armar-pc-gamer",
+    url: "https://www.compuservicessoft.com/armar-pc-gamer",
     type: "website",
   },
-  alternates: { canonical: "https://compuservicessoft.com/armar-pc-gamer" },
+  alternates: { canonical: "https://www.compuservicessoft.com/armar-pc-gamer" },
 };
 
 /* IDs de categorías según la BD */

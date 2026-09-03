@@ -151,12 +151,12 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true },
   },
   alternates: {
-    canonical: "https://compuservicessoft.com",
+    canonical: "https://www.compuservicessoft.com",
   },
   openGraph: {
     type: "website",
     locale: "es_CO",
-    url: "https://compuservicessoft.com",
+    url: "https://www.compuservicessoft.com",
     siteName: "CompuServicesSoft",
     title:
       "CompuServicesSoft | Tienda de Computadores y Servicio Técnico en Pasto, Nariño",
@@ -164,7 +164,7 @@ export const metadata: Metadata = {
       "Compra SSD, RAM, GPU, procesadores y más copmonentes de computador en Pasto, Nariño. Armado de PCs gamer y servicio técnico especializado. ¡Visítanos en el CC San Agustín Local 224A!",
     images: [
       {
-        url: "https://compuservicessoft.com/imagenes/local.webp",
+        url: "https://www.compuservicessoft.com/imagenes/local.webp",
         width: 1200,
         height: 630,
         alt: "CompuServicesSoft - Tienda de tecnología en Pasto, Nariño — CC San Agustín",
@@ -176,7 +176,7 @@ export const metadata: Metadata = {
     title: "CompuServicesSoft | Tienda de Computadores en Pasto, Nariño",
     description:
       "Compra SSD, RAM, GPU, procesadores y periféricos en Pasto, Nariño. Armado de PCs gamer y servicio técnico especializado en el CC San Agustín.",
-    images: ["https://compuservicessoft.com/imagenes/local.webp"],
+    images: ["https://www.compuservicessoft.com/imagenes/local.webp"],
   },
   category: "technology",
   icons: {
@@ -202,7 +202,7 @@ export default function RootLayout({
     name: "CompuServicesSoft",
     description:
       "Venta de componentes de computador, periféricos, armado de PCs y servicio técnico especializado en Pasto, Nariño, Colombia.",
-    url: "https://compuservicessoft.com",
+    url: "https://www.compuservicessoft.com",
     telephone: "+573242264795",
     email: "compuservicessoft@gmail.com",
     address: {
@@ -235,7 +235,7 @@ export default function RootLayout({
       "https://wa.me/573242264795",
     ],
     priceRange: "$$",
-    image: "https://compuservicessoft.com/imagenes/local.webp",
+    image: "https://www.compuservicessoft.com/imagenes/local.webp",
     hasMap: "https://maps.app.goo.gl/e3nUAFL7zDNTMF9i7",
     knowsAbout: [
       "Venta de componentes de computador",

@@ -16,24 +16,32 @@ type Props = {
   searchParams: Promise<SearchParams>;
 };
 
+/* `null` significa "esta categoria no existe", nunca "la API fallo": si el
+   timeout tambien devolviera `null`, Google recibiria una pagina de categoria
+   vacia con 200 —un soft 404— cada vez que Zentivy tarde. Sin atrapar, Next
+   responde 500 y el crawler vuelve mas tarde. */
 async function resolverCategoria(slug: string): Promise<Categoria | null> {
-  try {
-    const cats = await getCategorias();
-    return cats.find((c) => slugify(c.nombre) === slug) ?? null;
-  } catch {
-    return null;
-  }
+  const cats = await getCategorias();
+  return cats.find((c) => slugify(c.nombre) === slug) ?? null;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const sp = await searchParams;
   const cat = await resolverCategoria(slug);
   if (!cat) return { title: "Categoría | CompuServicesSoft" };
 
-  const titulo = `${cat.nombre} en Pasto, Nariño | CompuServicesSoft`;
+  /* La página 2 se apunta a sí misma, no a la 1. Apuntarlas todas a la primera
+     le dice a Google que las demás son duplicados y las descarta: los productos
+     que solo aparecen de la página 2 en adelante se quedan sin ningún camino de
+     rastreo hacia ellos, y con 24 por página eso es casi todo el catálogo. */
+  const pagina = Number(sp.page) > 1 ? Number(sp.page) : 0;
+  const sufijoPagina = pagina ? `?page=${pagina}` : "";
+
+  const titulo = `${cat.nombre} en Pasto, Nariño${pagina ? ` — Página ${pagina}` : ""} | CompuServicesSoft`;
   const descripcion = `Compra ${cat.nombre} en Pasto, Nariño al mejor precio. Productos originales con garantía. Visita CompuServicesSoft en el CC San Agustín, Local 224A.`;
-  const canonical = `https://compuservicessoft.com${urlCategoriaFiltro(cat.nombre)}`;
-  const ogImage = "https://compuservicessoft.com/imagenes/local.webp";
+  const canonical = `https://www.compuservicessoft.com${urlCategoriaFiltro(cat.nombre)}${sufijoPagina}`;
+  const ogImage = "https://www.compuservicessoft.com/imagenes/local.webp";
 
   /* Generar keywords optimizadas con sinónimos */
   const keywords = generateCategoryKeywords(cat.nombre, slug);
@@ -65,20 +73,19 @@ export default async function CategoriaFiltroPage({ params, searchParams }: Prop
   let productos: import("@/types").Producto[] = [];
   let totalPages = 0;
   let totalElements = 0;
-  let errorMsg = "";
 
-  try {
-    categoriasData = await getCategorias();
-    categoriaActiva = categoriasData.find((c) => slugify(c.nombre) === slug) ?? null;
+  /* Sin try/catch: devolver 200 con "no se pudo conectar" es un soft 404 —Google
+     lo lee como pagina valida y vacia, y la deja de indexar—. Que la excepcion
+     suba hace que Next responda 500, que es lo que el crawler entiende como
+     "vuelve despues". */
+  categoriasData = await getCategorias();
+  categoriaActiva = categoriasData.find((c) => slugify(c.nombre) === slug) ?? null;
 
-    if (categoriaActiva) {
-      const data = await getProductosPorCategoria(categoriaActiva.id, page, PAGE_SIZE);
-      productos = data.content;
-      totalPages = data.totalPages;
-      totalElements = data.totalElements;
-    }
-  } catch {
-    errorMsg = "No se pudo conectar con el servidor. Intenta más tarde.";
+  if (categoriaActiva) {
+    const data = await getProductosPorCategoria(categoriaActiva.id, page, PAGE_SIZE);
+    productos = data.content;
+    totalPages = data.totalPages;
+    totalElements = data.totalElements;
   }
 
   const paginaActual = page + 1;
@@ -90,7 +97,7 @@ export default async function CategoriaFiltroPage({ params, searchParams }: Prop
     "@type": "CollectionPage",
     "name": `${categoriaActiva.nombre} en Pasto`,
     "description": `Compra ${categoriaActiva.nombre} en Pasto, Nariño. ${totalElements} productos disponibles con garantía y envío.`,
-    "url": `https://compuservicessoft.com${urlCategoriaFiltro(categoriaActiva.nombre)}`,
+    "url": `https://www.compuservicessoft.com${urlCategoriaFiltro(categoriaActiva.nombre)}`,
     "breadcrumb": {
       "@type": "BreadcrumbList",
       "itemListElement": [
@@ -98,19 +105,19 @@ export default async function CategoriaFiltroPage({ params, searchParams }: Prop
           "@type": "ListItem",
           "position": 1,
           "name": "Inicio",
-          "item": "https://compuservicessoft.com"
+          "item": "https://www.compuservicessoft.com"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Catálogo",
-          "item": "https://compuservicessoft.com/catalogo"
+          "item": "https://www.compuservicessoft.com/catalogo"
         },
         {
           "@type": "ListItem",
           "position": 3,
           "name": categoriaActiva.nombre,
-          "item": `https://compuservicessoft.com${urlCategoriaFiltro(categoriaActiva.nombre)}`
+          "item": `https://www.compuservicessoft.com${urlCategoriaFiltro(categoriaActiva.nombre)}`
         }
       ]
     },
@@ -178,13 +185,7 @@ export default async function CategoriaFiltroPage({ params, searchParams }: Prop
               </div>
             )}
 
-            {errorMsg && (
-              <div className="mb-6 p-5 rounded-xl border border-red-200 bg-red-50 text-center text-red-600 text-sm">
-                {errorMsg}
-              </div>
-            )}
-
-            {!errorMsg && productos.length === 0 ? (
+            {productos.length === 0 ? (
               <div className="py-24 text-center">
                 <p className="text-5xl mb-4">📦</p>
                 <p className="text-lg font-bold text-gray-800 mb-2">Sin productos</p>

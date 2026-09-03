@@ -4,10 +4,10 @@
  * Accepts a JSON body and submits URLs to IndexNow.
  *
  * Body (single URL):
- *   { "url": "https://compuservicessoft.com/some-page" }
+ *   { "url": "https://www.compuservicessoft.com/some-page" }
  *
  * Body (batch):
- *   { "urls": ["https://compuservicessoft.com/a", "https://compuservicessoft.com/b"] }
+ *   { "urls": ["https://www.compuservicessoft.com/a", "https://www.compuservicessoft.com/b"] }
  *
  * Security: protected by INDEXNOW_ROUTE_SECRET so only internal callers can trigger it.
  * Pass the secret in the x-api-key header:

@@ -2,69 +2,67 @@ import type { MetadataRoute } from "next";
 import { getCategorias, getTodosLosProductos } from "@/lib/api";
 import { urlProducto, urlCategoria } from "@/lib/utils";
 
-const BASE = "https://compuservicessoft.com";
+const BASE = "https://www.compuservicessoft.com";
 
-// El sitemap se regenera cada 12 horas en Vercel.
-// new Date() se captura en el momento de regeneración, no en cada crawl.
+// El sitemap se regenera cada 12 horas. El mismo número se le pasa a las
+// llamadas de abajo: Next se queda con el `revalidate` más corto entre el de la
+// ruta y el de sus fetch, así que sin eso el sitemap se regeneraba cada 2
+// minutos —y con él, cualquier fecha que dependiera del momento de generación—.
 export const revalidate = 43200;
 
-// Para productos sin updatedAt (anteriores a la migración), genera una fecha
-// estable basada en el ID: el mismo producto siempre recibe la misma fecha,
-// distribuida aleatoriamente en los últimos 60 días.
-function fechaEstableParaId(id: number, ahora: Date): Date {
-  const diasAtras = (id * 17 + 11) % 60; // determinístico, rango 0-59
-  const fecha = new Date(ahora);
-  fecha.setDate(fecha.getDate() - diasAtras);
-  return fecha;
-}
+// Los productos no llevan `lastModified`. El catálogo público de Zentivy no
+// expone fecha de modificación (ver el tipo `Producto`), así que no hay ningún
+// dato real que poner ahí.
+//
+// Antes se generaba una fecha "estable por id" con `ahora - (id*17+11)%60` días.
+// No era estable: `ahora` avanza en cada regeneración, así que las 380 fechas se
+// corrían 12 horas hacia adelante cada 12 horas. Google lo veía como un catálogo
+// entero modificándose sin parar, y su documentación es explícita: si el lastmod
+// no es verificable deja de creerlo —para todo el sitio, no solo para esas URLs—.
+// Omitirlo es lo que Google recomienda cuando no se conoce la fecha real:
+// https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const ahora = new Date();
-
-  /* Páginas estáticas */
+  /* Ninguna entrada lleva `lastModified`. Antes las estáticas usaban
+     `new Date()`, que es el instante de regeneración y no la fecha en que la
+     página cambió de verdad: Google recibía "la home se modificó hace dos
+     minutos" en cada consulta. Es el mismo error que la fecha inventada de los
+     productos, y la respuesta de Google es la misma —dejar de creerle al
+     lastmod de todo el sitio—. Sin fecha real que poner, el sitemap queda como
+     lo que es: una lista de descubrimiento. */
   const estaticas: MetadataRoute.Sitemap = [
-    { url: BASE,                              lastModified: ahora, changeFrequency: "weekly",  priority: 1.0 },
-    { url: `${BASE}/desarrollo-web`,          lastModified: ahora, changeFrequency: "weekly",  priority: 0.9 },
-    { url: `${BASE}/catalogo`,                lastModified: ahora, changeFrequency: "daily",   priority: 0.9 },
-    { url: `${BASE}/armar-pc-gamer`,          lastModified: ahora, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${BASE}/desarrollo-web/diseno-web-personalizado`,       lastModified: ahora, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${BASE}/desarrollo-web/seo-posicionamiento-web-pasto`,  lastModified: ahora, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${BASE}/desarrollo-web/tienda-online-ecommerce`,        lastModified: ahora, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${BASE}/desarrollo-web/landing-page`,                   lastModified: ahora, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${BASE}/desarrollo-web/software-a-la-medida`,           lastModified: ahora, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${BASE}/politicas`,               lastModified: ahora, changeFrequency: "monthly", priority: 0.4 },
+    { url: BASE,                              priority: 1.0 },
+    { url: `${BASE}/desarrollo-web`,          priority: 0.9 },
+    { url: `${BASE}/catalogo`,                priority: 0.9 },
+    { url: `${BASE}/armar-pc-gamer`,          priority: 0.8 },
+    { url: `${BASE}/desarrollo-web/diseno-web-personalizado`,       priority: 0.8 },
+    { url: `${BASE}/desarrollo-web/seo-posicionamiento-web-pasto`,  priority: 0.8 },
+    { url: `${BASE}/desarrollo-web/tienda-online-ecommerce`,        priority: 0.8 },
+    { url: `${BASE}/desarrollo-web/landing-page`,                   priority: 0.8 },
+    { url: `${BASE}/desarrollo-web/software-a-la-medida`,           priority: 0.8 },
+    { url: `${BASE}/politicas`,               priority: 0.4 },
   ];
 
-  /* Páginas de categorías */
-  let paginasCategorias: MetadataRoute.Sitemap = [];
-  try {
-    const categorias = await getCategorias();
-    paginasCategorias = categorias.map((cat) => ({
-      url: `${BASE}${urlCategoria(cat.nombre)}`,
-      lastModified: ahora,
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-    }));
-  } catch {
-    /* Si falla la API, el sitemap sigue funcionando sin categorías */
-  }
+  /* Categorías y productos.
+     Sin try/catch a propósito. Antes, si Zentivy fallaba, el sitemap se publicaba
+     igual con solo las 10 URLs estáticas: Google leía que el catálogo entero
+     desapareció del sitemap, que es peor señal que no recibir sitemap. Dejando
+     subir la excepción, la regeneración falla y el ISR de Next sigue sirviendo la
+     última versión buena hasta que la API vuelva. */
+  const [categorias, productos] = await Promise.all([
+    getCategorias(revalidate),
+    getTodosLosProductos(revalidate),
+  ]);
 
-  /* Páginas de productos — cargamos hasta 500 para el sitemap */
-  let paginasProductos: MetadataRoute.Sitemap = [];
-  try {
-    // El catálogo público ordena por nombre y no expone fecha de modificación, así
-    // que el `lastModified` sale de la fecha estable por id: cambiarla en cada
-    // despliegue le enseña a Google que la señal no vale nada.
-    const productos = await getTodosLosProductos();
-    paginasProductos = productos.map((p) => ({
-      url: `${BASE}${urlProducto(p.nombre, p.categoria.nombre)}`,
-      lastModified: fechaEstableParaId(p.id, ahora),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }));
-  } catch {
-    /* Si falla la API, el sitemap sigue funcionando sin productos */
-  }
+  const paginasCategorias: MetadataRoute.Sitemap = categorias.map((cat) => ({
+    url: `${BASE}${urlCategoria(cat.nombre)}`,
+    priority: 0.8,
+  }));
+
+  const paginasProductos: MetadataRoute.Sitemap = productos.map((p) => ({
+    url: `${BASE}${urlProducto(p.nombre, p.categoria.nombre)}`,
+    priority: 0.7,
+  }));
 
   return [...estaticas, ...paginasCategorias, ...paginasProductos];
 }

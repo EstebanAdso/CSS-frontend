@@ -56,10 +56,10 @@ export async function generateMetadata({
     openGraph: {
       title: titulo,
       description: descripcion,
-      url: "https://compuservicessoft.com/catalogo",
+      url: "https://www.compuservicessoft.com/catalogo",
       type: "website",
     },
-    alternates: { canonical: "https://compuservicessoft.com/catalogo" },
+    alternates: { canonical: "https://www.compuservicessoft.com/catalogo" },
   };
 }
 

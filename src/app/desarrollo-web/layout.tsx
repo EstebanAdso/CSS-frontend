@@ -66,12 +66,12 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true },
   },
   alternates: {
-    canonical: "https://compuservicessoft.com/desarrollo-web",
+    canonical: "https://www.compuservicessoft.com/desarrollo-web",
   },
   openGraph: {
     type: "website",
     locale: "es_CO",
-    url: "https://compuservicessoft.com/desarrollo-web",
+    url: "https://www.compuservicessoft.com/desarrollo-web",
     siteName: "CompuServicesSoft",
     title:
       "Desarrollo de Páginas Web en Pasto, Nariño | CompuServicesSoft",
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
       "Diseñamos páginas web profesionales, landing pages, tiendas online y software a la medida para empresas en Pasto, Nariño. Diseño moderno, SEO optimizado y entrega rápida. ¡Solicita tu presupuesto gratis!",
     images: [
       {
-        url: "https://compuservicessoft.com/imagenes/local.webp",
+        url: "https://www.compuservicessoft.com/imagenes/local.webp",
         width: 1200,
         height: 630,
         alt: "Desarrollo de páginas web en Pasto, Nariño — CompuServicesSoft",
@@ -91,7 +91,7 @@ export const metadata: Metadata = {
     title: "Páginas Web en Pasto | CompuServicesSoft",
     description:
       "Landing pages, páginas empresariales, tiendas online y software a la medida en Pasto, Nariño. Diseño moderno y SEO incluido.",
-    images: ["https://compuservicessoft.com/imagenes/local.webp"],
+    images: ["https://www.compuservicessoft.com/imagenes/local.webp"],
   },
   category: "technology",
 };
@@ -111,7 +111,7 @@ export default function DesarrolloWebLayout({
     provider: {
       "@type": "LocalBusiness",
       name: "CompuServicesSoft",
-      url: "https://compuservicessoft.com",
+      url: "https://www.compuservicessoft.com",
       telephone: "+573242264795",
       address: {
         "@type": "PostalAddress",
@@ -133,7 +133,7 @@ export default function DesarrolloWebLayout({
       "E-commerce",
       "Software a la medida",
     ],
-    url: "https://compuservicessoft.com/desarrollo-web",
+    url: "https://www.compuservicessoft.com/desarrollo-web",
   };
 
   /* Schema.org FAQPage */

@@ -98,18 +98,18 @@ export const metadata: Metadata = {
       "CompuServicesSoft Pasto | Tienda de Computadores y Componentes en Nariño",
     description:
       "Tu tienda de confianza en Pasto para componentes de PC, armado de computadores gamer y servicio técnico. Visítanos en CC San Agustín Local 224A.",
-    url: "https://compuservicessoft.com",
+    url: "https://www.compuservicessoft.com",
     type: "website",
     images: [
       {
-        url: "https://compuservicessoft.com/imagenes/local.webp",
+        url: "https://www.compuservicessoft.com/imagenes/local.webp",
         width: 1200,
         height: 630,
         alt: "CompuServicesSoft - Tienda de Tecnología en Pasto, Nariño",
       },
     ],
   },
-  alternates: { canonical: "https://compuservicessoft.com" },
+  alternates: { canonical: "https://www.compuservicessoft.com" },
 };
 
 export default function Home() {
@@ -119,7 +119,7 @@ export default function Home() {
     "@type": "LocalBusiness",
     "name": "CompuServicesSoft",
     "description": "Tienda de tecnología en Pasto especializada en componentes de PC, armado de computadores gamer y servicio técnico",
-    "image": "https://compuservicessoft.com/imagenes/local.jpeg",
+    "image": "https://www.compuservicessoft.com/imagenes/local.jpeg",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "CC San Agustín Local 224A",
@@ -133,7 +133,7 @@ export default function Home() {
       "latitude": 1.2136,
       "longitude": -77.2811
     },
-    "url": "https://compuservicessoft.com",
+    "url": "https://www.compuservicessoft.com",
     "priceRange": "$$",
     "openingHoursSpecification": [
       {
@@ -154,10 +154,10 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "CompuServicesSoft",
-    "url": "https://compuservicessoft.com",
+    "url": "https://www.compuservicessoft.com",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://compuservicessoft.com/catalogo/buscar/{search_term_string}",
+      "target": "https://www.compuservicessoft.com/catalogo/buscar/{search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };

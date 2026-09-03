@@ -26,16 +26,16 @@ export const metadata: Metadata = {
     "SEO local Nariño Colombia",
     "estrategia SEO Pasto",
   ],
-  alternates: { canonical: "https://compuservicessoft.com/desarrollo-web/seo-posicionamiento-web-pasto" },
+  alternates: { canonical: "https://www.compuservicessoft.com/desarrollo-web/seo-posicionamiento-web-pasto" },
   openGraph: {
     title: "SEO y Posicionamiento Web en Pasto — CompuServicesSoft",
     description:
       "Haz que tu negocio en Pasto aparezca en Google. SEO local, optimización técnica y estrategia de contenido para más visibilidad y más clientes.",
-    url: "https://compuservicessoft.com/desarrollo-web/seo-posicionamiento-web-pasto",
+    url: "https://www.compuservicessoft.com/desarrollo-web/seo-posicionamiento-web-pasto",
     type: "website",
     images: [
       {
-        url: "https://compuservicessoft.com/imagenes/local.webp",
+        url: "https://www.compuservicessoft.com/imagenes/local.webp",
         width: 1200,
         height: 630,
         alt: "SEO y Posicionamiento Web en Pasto — CompuServicesSoft",
@@ -121,7 +121,7 @@ export default function SEOPastoPage() {
       },
     },
     areaServed: { "@type": "City", name: "Pasto" },
-    url: "https://compuservicessoft.com/desarrollo-web/seo-posicionamiento-web-pasto",
+    url: "https://www.compuservicessoft.com/desarrollo-web/seo-posicionamiento-web-pasto",
   };
 
   const schemaFAQ = {
@@ -138,9 +138,9 @@ export default function SEOPastoPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://compuservicessoft.com" },
-      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://compuservicessoft.com/desarrollo-web" },
-      { "@type": "ListItem", position: 3, name: "SEO Posicionamiento Web", item: "https://compuservicessoft.com/desarrollo-web/seo-posicionamiento-web-pasto" },
+      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://www.compuservicessoft.com" },
+      { "@type": "ListItem", position: 2, name: "Desarrollo Web", item: "https://www.compuservicessoft.com/desarrollo-web" },
+      { "@type": "ListItem", position: 3, name: "SEO Posicionamiento Web", item: "https://www.compuservicessoft.com/desarrollo-web/seo-posicionamiento-web-pasto" },
     ],
   };
 

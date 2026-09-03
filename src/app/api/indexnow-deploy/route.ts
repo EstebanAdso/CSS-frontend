@@ -5,7 +5,7 @@
  * public URL to IndexNow in one shot.
  *
  * Example (curl):
- *   curl -X POST https://compuservicessoft.com/api/indexnow-deploy \
+ *   curl -X POST https://www.compuservicessoft.com/api/indexnow-deploy \
  *        -H "x-api-key: <INDEXNOW_ROUTE_SECRET>"
  *
  * Vercel deploy hook: add this URL in Project → Settings → Deploy Hooks
