@@ -1,10 +1,22 @@
 name: Submit URLs to IndexNow after deploy
 
-# Runs on every push to main (= every Vercel production deployment)
+# Corre en cada push a main (= cada despliegue de producción a Vercel) y además
+# una vez al día.
+#
+# El disparo diario existe porque el catálogo cambia sin que cambie el código: el
+# negocio agrega una categoría o repone un producto agotado en Zentivy, la web lo
+# refleja sola —lee la API en cada regeneración— pero IndexNow solo se enteraba al
+# subir código. Una categoría nueva podía quedar semanas sin anunciarse a Bing
+# esperando un commit que no tenía nada que ver con ella.
 on:
   push:
     branches:
       - main
+  schedule:
+    # 08:00 UTC = 3:00 a.m. en Colombia, fuera del horario de atención.
+    - cron: "0 8 * * *"
+  # Permite dispararlo a mano desde la pestaña Actions tras un cambio grande de inventario.
+  workflow_dispatch:
 
 jobs:
   indexnow:
@@ -14,7 +26,9 @@ jobs:
     steps:
       # Wait for Vercel to finish deploying before submitting URLs.
       # Vercel typically takes 30–90 seconds for a production build.
+      # Solo tras un push: la corrida diaria no espera ningún despliegue.
       - name: Wait for Vercel deployment
+        if: github.event_name == 'push'
         run: sleep 120
 
       # Call the IndexNow deploy endpoint to submit all site URLs to Bing.

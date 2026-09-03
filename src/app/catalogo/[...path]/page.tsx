@@ -202,10 +202,25 @@ export default async function CatalogoPathPage({ params }: Props) {
     name: producto.nombre,
     description: producto.descripcion || `${producto.nombre} disponible en CompuServicesSoft Pasto`,
     image: imagenSrc,
-    brand: {
-      "@type": "Brand",
-      name: "CompuServicesSoft",
-    },
+    /* La marca del PRODUCTO, no la de la tienda. Antes decía siempre
+       "CompuServicesSoft", que es el vendedor —eso ya va en `seller`—. Google usa
+       `brand` para agrupar fichas del mismo fabricante y para las listas de
+       compra; declarar la tienda como fabricante de una SSD Fanxiang es
+       información falsa. Cuando Zentivy no registró la marca se omite el campo:
+       ausente es correcto, inventado no. */
+    ...(producto.marca ? { brand: { "@type": "Brand", name: producto.marca } } : {}),
+    ...(producto.modelo ? { model: producto.modelo } : {}),
+    /* La presentación —capacidad, talla, medida— como propiedad adicional, que es
+       donde schema.org espera los atributos que no tienen campo propio. */
+    ...(producto.especificacion
+      ? {
+          additionalProperty: {
+            "@type": "PropertyValue",
+            name: "Presentación",
+            value: producto.especificacion,
+          },
+        }
+      : {}),
     offers: {
       "@type": "Offer",
       url: `https://www.compuservicessoft.com${urlProducto(producto.nombre, producto.categoria.nombre)}`,
@@ -226,6 +241,22 @@ export default async function CatalogoPathPage({ params }: Props) {
       },
       priceValidUntil: precioValidoHasta(),
       itemCondition: "https://schema.org/NewCondition",
+      /* La garantía ya se muestra en la ficha; marcarla la vuelve un dato que el
+         buscador entiende y no solo texto suelto. `garantia` es null cuando el
+         negocio no lo registró y 0 cuando el producto no la tiene: en ninguno de
+         los dos casos hay algo que declarar. */
+      ...(producto.garantia
+        ? {
+            warranty: {
+              "@type": "WarrantyPromise",
+              durationOfWarranty: {
+                "@type": "QuantitativeValue",
+                value: producto.garantia,
+                unitCode: "MON",
+              },
+            },
+          }
+        : {}),
     },
     category: producto.categoria.nombre,
     "sku": `COMPUSERV-${producto.id}`,

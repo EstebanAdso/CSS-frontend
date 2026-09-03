@@ -30,9 +30,19 @@ export async function generateMetadata({
   const q = params.q ?? "";
   const categoriaId = params.categoriaId ? Number(params.categoriaId) : null;
 
-  let titulo = "Catálogo de Productos | CompuServicesSoft Pasto";
+  /* La página 2 se apunta a sí misma. Canonicalizar todas a `/catalogo` le dice a
+     Google que de la 2 en adelante son duplicados y las descarta, y con 24
+     productos por página eso deja sin ruta de rastreo a casi todo el listado.
+     El mismo criterio que en /catalogo/categoria/[slug]. */
+  const pagina = Number(params.page) > 1 ? Number(params.page) : 0;
+  const sufijoPagina = pagina ? `?page=${pagina}` : "";
+
+  let titulo = `Catálogo de Productos${pagina ? ` — Página ${pagina}` : ""} | CompuServicesSoft Pasto`;
   let descripcion =
     "Explora nuestro catálogo de componentes de computador en Pasto, Nariño. SSD, RAM, GPU, monitores, procesadores y más. Envíos y atención en el CC San Agustín.";
+
+  /* Por defecto, el listado paginado. El filtro por categoría lo reescribe abajo. */
+  let canonical = `https://www.compuservicessoft.com/catalogo${sufijoPagina}`;
 
   if (q) {
     titulo = `"${q}" — Catálogo CompuServicesSoft Pasto`;
@@ -44,6 +54,11 @@ export async function generateMetadata({
       if (cat) {
         titulo = `${cat.nombre} en Pasto | CompuServicesSoft`;
         descripcion = `Compra ${cat.nombre} en Pasto, Nariño. Productos de calidad con garantía en CompuServicesSoft.`;
+        /* `/catalogo?categoriaId=7` muestra exactamente lo mismo que
+           `/catalogo/categoria/ssd`, que es la URL legible y la que está en el
+           sitemap. Se apunta ahí en vez de a `/catalogo`: consolidar en la página
+           equivalente conserva la señal, mandarla al listado general la tira. */
+        canonical = `https://www.compuservicessoft.com${urlCategoriaFiltro(cat.nombre)}`;
       }
     } catch {
       /* Si falla, usa el título genérico */
@@ -56,10 +71,10 @@ export async function generateMetadata({
     openGraph: {
       title: titulo,
       description: descripcion,
-      url: "https://www.compuservicessoft.com/catalogo",
+      url: canonical,
       type: "website",
     },
-    alternates: { canonical: "https://www.compuservicessoft.com/catalogo" },
+    alternates: { canonical },
   };
 }
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { presentacionCategoria } from "@/lib/categorias";
 import { useRef } from "react";
 import { urlCategoria } from "@/lib/utils";
 
@@ -29,24 +30,6 @@ const categorias = [
   },
 ];
 
-/* Nombre visible más amigable para mostrar en la card */
-const NOMBRE_DISPLAY: Record<string, string> = {
-  SSD: "SSD",
-  M2: "M.2 NVMe",
-  MONITOR: "Monitor",
-  RAM: "RAM",
-  "FUENTE DE PODER": "Fuente de Poder",
-  COMPUTADOR: "Computadores",
-  GRAFICA: "Tarjeta Gráfica",
-  MOUSE: "Mouse",
-  TECLADO: "Teclado",
-  "CONTROLES Y JUEGOS": "Controles y Juegos",
-  "BASE REFRIGERANTE": "Base Refrigerante",
-  MOTHERBOARD: "Motherboard",
-  PROCESADOR: "Procesador",
-  DISIPADOR: "Disipador",
-  REGULADOR: "Reguladores y UPS",
-};
 
 export default function CategoriasCarrusel() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -165,7 +148,7 @@ export default function CategoriasCarrusel() {
                 <div className="relative w-full aspect-4/3 bg-gray-50 overflow-hidden">
                   <Image
                     src={cat.img}
-                    alt={`${NOMBRE_DISPLAY[cat.nombre] ?? cat.nombre} en Pasto — CompuServicesSoft Nariño`}
+                    alt={`${presentacionCategoria(cat.nombre).plural} en Pasto — CompuServicesSoft Nariño`}
                     fill
                     className="object-contain group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, (max-width: 1536px) 16vw, 14vw"
@@ -173,7 +156,7 @@ export default function CategoriasCarrusel() {
                 </div>
                 <div className="p-3 flex items-center justify-between">
                   <p className="text-sm font-bold text-gray-800 leading-snug group-hover:text-gray-900 transition-colors truncate">
-                    {NOMBRE_DISPLAY[cat.nombre] ?? cat.nombre}
+                    {presentacionCategoria(cat.nombre).plural}
                   </p>
                   <svg
                     className="w-3.5 h-3.5 text-gray-400 shrink-0 group-hover:translate-x-1 transition-transform"
