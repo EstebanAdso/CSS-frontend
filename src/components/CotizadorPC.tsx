@@ -2,11 +2,11 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import ImagenProducto from "@/components/ImagenProducto";
 import type { Producto } from "@/types";
 import WhatsAppSelector from "@/components/WhatsAppSelector";
 import { urlProducto } from "@/lib/utils";
-import { resolverImagen } from "@/lib/api";
+import { miniatura } from "@/lib/api";
 
 type DatosCategorias = {
   procesadores: Producto[];
@@ -390,12 +390,13 @@ export default function CotizadorPC({ datos }: { datos: DatosCategorias }) {
                     rel="noopener noreferrer"
                     className="relative w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-white border border-gray-200 shadow-sm hover:border-gray-400 transition-colors"
                   >
-                    <Image
-                      src={resolverImagen(item.imagen)}
+                    <ImagenProducto
+                      src={miniatura(item.imagen, 120)}
                       alt={item.nombre}
                       fill
                       sizes="80px"
                       className="object-contain p-1.5"
+                      compacto
                       unoptimized
                     />
                   </Link>

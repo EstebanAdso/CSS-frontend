@@ -25,21 +25,30 @@ npm run dev
 
 Abre [http://localhost:3000](http://localhost:3000) en el navegador.
 
-### Variable de entorno
+### Variables de entorno
 
-La URL base de la API se configura en `.env.local`:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8085
-```
-
-Para producción usar `.env.production`:
+El catálogo (productos, precios, fotos y categorías) sale del **catálogo público de
+Zentivy**, no de una base propia: el inventario se administra allá y esta web solo lo
+lee. Se configura en `.env.local`:
 
 ```env
-NEXT_PUBLIC_API_URL=https://compuservicessoft.com
+NEXT_PUBLIC_ZENTIVY_API=https://zentivy-backend-production.up.railway.app
+NEXT_PUBLIC_ZENTIVY_SLUG=compuservicessoft
 ```
 
-Si no existe el archivo, el valor por defecto es `http://localhost:8085` (definido en `src/lib/api.ts`).
+En local, apuntando al backend de Zentivy en el puerto 8083:
+
+```env
+NEXT_PUBLIC_ZENTIVY_API=http://localhost:8083
+```
+
+Los valores por defecto (`http://localhost:8083` y `compuservicessoft`) están en
+`src/lib/api.ts`. El endpoint es de solo lectura y sin autenticación, y **no** entrega
+costo de compra, precio mayorista, proveedor ni existencias: por eso la web ya no
+muestra "N en stock" — el catálogo solo publica productos activos.
+
+Todas las llamadas salen del servidor de Next (RSC con `revalidate`), así que no hay
+CORS que configurar ni llaves que exponer al navegador.
 
 ---
 

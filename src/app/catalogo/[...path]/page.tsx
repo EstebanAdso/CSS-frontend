@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
-import Image from "next/image";
+import { notFound } from "next/navigation";
+import ImagenProducto from "@/components/ImagenProducto";
 import Link from "next/link";
-import { getCategorias, getProductosPorCategoria, resolverImagen } from "@/lib/api";
+import {
+  getCategorias,
+  getProductosPorCategoria,
+  getTodosPorCategoria,
+  miniatura,
+  resolverImagen,
+} from "@/lib/api";
 import { slugify, urlProducto, urlCategoria } from "@/lib/utils";
 import { generateProductKeywords } from "@/lib/seo-keywords";
 import Navbar from "@/components/Navbar";
@@ -43,8 +49,10 @@ async function resolverProducto(
   if (!categoria) return null;
 
   try {
-    const data = await getProductosPorCategoria(categoria.id, 0, 500);
-    const producto = data.content.find((p) => slugify(p.nombre) === prodSlug);
+    /* Todas las páginas de la categoría: el servidor no entrega más de 48 por llamada, y
+       un producto en el puesto 49 quedaría con su ficha en 404 sin que nada lo avise. */
+    const productos = await getTodosPorCategoria(categoria.id);
+    const producto = productos.find((p) => slugify(p.nombre) === prodSlug);
     if (!producto) return null;
     return { producto, categoria };
   } catch {
@@ -94,6 +102,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     alternates: { canonical: canonicalUrl },
   };
+}
+
+/* Google necesita `priceValidUntil` en el futuro: si la fecha ya paso, deja de
+   mostrar el precio en el resultado de busqueda. Se redondea al primer dia de un
+   mes ~3 meses adelante en vez de calcular "ahora + 90 dias" por dos motivos: el
+   valor no cambia entre renders —`Date.now()` dentro del componente es impuro y
+   lo marca react-hooks/purity— y el HTML que guarda ISR queda identico durante
+   todo el mes en lugar de variar en cada regeneracion. Nunca queda a menos de
+   ~60 dias de distancia. */
+function precioValidoHasta(): string {
+  const ahora = new Date();
+  /* Date.UTC normaliza el desborde de mes: mes 13 pasa a enero del ano siguiente. */
+  const hasta = new Date(Date.UTC(ahora.getUTCFullYear(), ahora.getUTCMonth() + 3, 1));
+  return hasta.toISOString().split("T")[0];
 }
 
 export default async function CatalogoPathPage({ params }: Props) {
@@ -159,8 +181,8 @@ export default async function CatalogoPathPage({ params }: Props) {
   }
 
   const { producto } = resultado;
-  const disponible = producto.cantidad > 0;
-  const imagenSrc = resolverImagen(producto.imagen);
+
+  const imagenSrc = miniatura(producto.imagen, 900);
   const urlCat = urlCategoria(producto.categoria.nombre);
 
   let relacionados: Producto[] = [];
@@ -189,7 +211,7 @@ export default async function CatalogoPathPage({ params }: Props) {
       url: `https://compuservicessoft.com${urlProducto(producto.nombre, producto.categoria.nombre)}`,
       priceCurrency: "COP",
       price: String(producto.precioVendido),   // string evita que Google asuma USD
-      availability: disponible ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      availability: "https://schema.org/InStock",   // el catálogo solo publica productos disponibles
       seller: {
         "@type": "LocalBusiness",
         name: "CompuServicesSoft",
@@ -202,7 +224,7 @@ export default async function CatalogoPathPage({ params }: Props) {
           addressCountry: "CO",
         },
       },
-      priceValidUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      priceValidUntil: precioValidoHasta(),
       itemCondition: "https://schema.org/NewCondition",
     },
     category: producto.categoria.nombre,
@@ -275,7 +297,7 @@ export default async function CatalogoPathPage({ params }: Props) {
 
           {/* Imagen */}
           <div className="rounded-2xl overflow-hidden relative aspect-square bg-gray-50 border border-gray-200">
-            <Image
+            <ImagenProducto
               src={imagenSrc}
               alt={`${producto.nombre} — ${producto.categoria.nombre} en Pasto, Nariño`}
               fill
@@ -304,11 +326,11 @@ export default async function CatalogoPathPage({ params }: Props) {
               <span className="text-sm text-gray-400 mb-1">COP</span>
             </div>
 
+            {/* El catálogo solo publica productos disponibles; el número de unidades
+                no se muestra —es información del negocio, no del cliente—. */}
             <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${disponible ? "bg-green-500" : "bg-red-400"}`} />
-              <span className={`text-sm font-medium ${disponible ? "text-green-600" : "text-red-500"}`}>
-                {disponible ? `Disponible — ${producto.cantidad} en stock` : "Agotado"}
-              </span>
+              <span className="w-2 h-2 rounded-full bg-green-500" />
+              <span className="text-sm font-medium text-green-600">Disponible</span>
             </div>
 
             {producto.descripcion && (
@@ -321,10 +343,13 @@ export default async function CatalogoPathPage({ params }: Props) {
             <div className="grid grid-cols-2 gap-3">
               {[
                 { label: "Categoría", value: producto.categoria.nombre },
-                { label: "Stock", value: `${producto.cantidad} unidades` },
+                producto.marca ? { label: "Marca", value: producto.marca } : null,
+                producto.modelo ? { label: "Modelo", value: producto.modelo } : null,
+                producto.especificacion ? { label: "Presentación", value: producto.especificacion } : null,
+                producto.garantia ? { label: "Garantía", value: `${producto.garantia} meses` } : null,
                 { label: "Ubicación", value: "Pasto, Nariño" },
                 { label: "Horario", value: "10am – 7pm" },
-              ].map((item) => (
+              ].filter((x): x is { label: string; value: string } => x !== null).map((item) => (
                 <div key={item.label} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
                   <p className="text-xs text-gray-400 mb-1">{item.label}</p>
                   <p className="text-sm font-semibold text-gray-800">{item.value}</p>
@@ -332,15 +357,17 @@ export default async function CatalogoPathPage({ params }: Props) {
               ))}
             </div>
 
-            {producto.categoria.descripcionGarantia && (
+            {producto.garantia ? (
               <div className="flex items-start gap-3 p-4 rounded-xl bg-green-50 border border-green-100">
                 <span className="text-xl">🛡️</span>
                 <div>
                   <p className="text-xs font-bold text-green-700 mb-1">Garantía</p>
-                  <p className="text-xs text-green-600">{producto.categoria.descripcionGarantia}</p>
+                  <p className="text-xs text-green-600">
+                    {producto.garantia} {producto.garantia === 1 ? "mes" : "meses"} de garantía por defectos de fábrica.
+                  </p>
                 </div>
               </div>
-            )}
+            ) : null}
 
             <WhatsAppSelector
               mensaje={msgWsp}

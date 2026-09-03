@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getProductosPorCategoria } from "@/lib/api";
+import { buscarCategoria, getTodosPorCategoria } from "@/lib/api";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
@@ -37,24 +37,45 @@ export const metadata: Metadata = {
 };
 
 /* IDs de categorías según la BD */
-const CAT = {
-  procesador: 20,
-  ram: 4,
-  board: 19,
-  fuente: 5,
-  ssd: 1,
-  nvme: 2,
-  grafica: 8,
-  monitor: 3,
-  gabinete: 35,
-  disipador: 21,
+/**
+ * Cada pieza del armador, con los nombres de categoría que puede tener en el catálogo.
+ *
+ * <p>Antes eran ids de la base MySQL (`procesador: 20`, `ram: 4`…). Con el catálogo de
+ * Zentivy esos ids no existen, y la página habría quedado con TODAS las listas vacías sin
+ * dar un solo error —el `catch` devuelve `[]`—. Por nombre sobrevive a la migración y
+ * también a que el negocio renombre una categoría; los sinónimos cubren el plural y las
+ * formas comunes.
+ */
+const CAT: Record<string, string[]> = {
+  procesador: ["procesador", "procesadores", "cpu"],
+  ram: ["ram", "memoria ram", "memorias"],
+  board: ["motherboard", "board", "placa madre", "tarjeta madre"],
+  fuente: ["fuente de poder", "fuente", "psu"],
+  ssd: ["ssd", "disco ssd", "disco solido"],
+  // En el catálogo la categoría se llama «M2»; los otros nombres quedan por si se renombra.
+  nvme: ["m2", "nvme", "ssd nvme", "m.2"],
+  grafica: ["grafica", "tarjeta grafica", "gpu", "tarjeta de video"],
+  monitor: ["monitor", "monitores", "pantalla"],
+  // «GABINETE DE COMPUTADOR» entra por coincidencia parcial.
+  gabinete: ["gabinete", "chasis", "case"],
+  disipador: ["disipador", "refrigeracion liquida", "cooler", "ventiladores"],
 };
 
-async function cargar(id: number): Promise<Producto[]> {
+/**
+ * Productos de una pieza. Si ninguno de los nombres existe en el catálogo, devuelve vacío y
+ * lo deja dicho en el log del servidor: una lista vacía en silencio es lo que hacía que este
+ * armador se pudiera quedar sin piezas sin que nadie se enterara.
+ */
+async function cargar(nombres: string[]): Promise<Producto[]> {
   try {
-    const data = await getProductosPorCategoria(id, 0, 100);
-    return data.content;
-  } catch {
+    const categoria = await buscarCategoria(...nombres);
+    if (!categoria) {
+      console.warn(`[armar-pc] Sin categoría en el catálogo para: ${nombres.join(" / ")}`);
+      return [];
+    }
+    return await getTodosPorCategoria(categoria.id);
+  } catch (e) {
+    console.warn(`[armar-pc] No se pudo cargar ${nombres[0]}:`, e);
     return [];
   }
 }

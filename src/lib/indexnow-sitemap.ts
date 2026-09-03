@@ -9,6 +9,7 @@
  */
 
 import { submitUrls } from "@/lib/indexnow";
+import { getCategorias } from "@/lib/api";
 
 const BASE = "https://www.compuservicessoft.com";
 
@@ -31,19 +32,14 @@ const STATIC_URLS: string[] = [
  * all URLs — static + dynamic — to IndexNow.
  */
 export async function submitAllUrls(): Promise<void> {
-  const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8085";
   const dynamicUrls: string[] = [];
 
-  /* Fetch categories */
+  /* Categories come from the Zentivy public catalog (see src/lib/api.ts) */
   try {
-    const res = await fetch(`${apiBase}/api/categories?size=200`);
-    if (res.ok) {
-      const data = await res.json();
-      const items: { nombre: string }[] = data.content ?? data;
-      items.forEach((cat) => {
-        dynamicUrls.push(`${BASE}/catalogo/categoria/${slugify(cat.nombre)}`);
-      });
-    }
+    const categorias = await getCategorias();
+    categorias.forEach((cat) => {
+      dynamicUrls.push(`${BASE}/catalogo/categoria/${slugify(cat.nombre)}`);
+    });
   } catch (err) {
     console.warn("[IndexNow] Could not fetch categories:", err);
   }

@@ -43,7 +43,7 @@ export async function generateMetadata({
       const cat = categorias.find((c) => c.id === categoriaId);
       if (cat) {
         titulo = `${cat.nombre} en Pasto | CompuServicesSoft`;
-        descripcion = `Compra ${cat.nombre} en Pasto, Nariño. ${cat.descripcion ?? "Productos de calidad con garantía en CompuServicesSoft."}`;
+        descripcion = `Compra ${cat.nombre} en Pasto, Nariño. Productos de calidad con garantía en CompuServicesSoft.`;
       }
     } catch {
       /* Si falla, usa el título genérico */
@@ -72,7 +72,8 @@ export default async function CatalogoPage({
   const q = params.q ?? "";
   const categoriaId = params.categoriaId ? Number(params.categoriaId) : null;
   const page = params.page ? Math.max(0, Number(params.page) - 1) : 0;
-  const PAGE_SIZE = 12;
+  /* El mismo tamaño con el que pagina Zentivy: la mitad de páginas para ver lo mismo. */
+  const PAGE_SIZE = 24;
 
   /* Redirect legacy: ?q= → /catalogo/buscar/[slug] */
   if (q) redirect(urlBusqueda(q));

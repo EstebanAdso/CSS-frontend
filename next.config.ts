@@ -24,6 +24,11 @@ const nextConfig: NextConfig = {
     /* Permite imágenes desde el servidor de producción cuando la URL cambie */
     remotePatterns: [
       {
+        /* Las fotos del catálogo viven en Cloudinary (las sube Zentivy) */
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
         protocol: "https",
         hostname: "compuservicessoft.com",
       },

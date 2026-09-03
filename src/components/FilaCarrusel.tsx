@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import ImagenProducto from "@/components/ImagenProducto";
+import { resolverImagen } from "@/lib/api";
 import { useRef } from "react";
-import { urlProducto, urlCategoriaFiltro } from "@/lib/utils";
+import { urlProducto } from "@/lib/utils";
 import type { Producto } from "@/types";
 
 function formatPrecio(valor: number): string {
@@ -100,8 +101,8 @@ export default function FilaCarrusel({ titulo, lema, productos, urlVerTodos }: P
                 style={{ scrollSnapAlign: "start" }}
               >
                 <div className="relative w-full aspect-square bg-gray-50 overflow-hidden">
-                  <Image
-                    src={p.imagen ? `/${p.imagen.replace(/^(\.\.\/)+/, "")}` : "/imagenes/placeholder.png"}
+                  <ImagenProducto
+                    src={resolverImagen(p.imagen)}
                     alt={p.nombre}
                     fill
                     className="object-contain p-3 group-hover:scale-105 transition-transform duration-300"

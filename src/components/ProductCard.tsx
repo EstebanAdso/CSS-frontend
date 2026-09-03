@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import ImagenProducto from "@/components/ImagenProducto";
 import { useRef, useState, useEffect } from "react";
 import type { Producto } from "@/types";
-import { resolverImagen } from "@/lib/api";
+import { miniatura } from "@/lib/api";
 import { urlProducto } from "@/lib/utils";
 
 type Props = {
@@ -21,7 +21,9 @@ function formatPrecio(valor: number): string {
 }
 
 export default function ProductCard({ producto }: Props) {
-  const imagenSrc = resolverImagen(producto.imagen);
+  /* Miniatura y no el original: la tarjeta mide ~300px y el archivo de Cloudinary
+     puede pesar cientos de KB; una página de catálogo trae doce. */
+  const imagenSrc = miniatura(producto.imagen, 500);
   const tituloRef = useRef<HTMLHeadingElement>(null);
   const [tituloLargo, setTituloLargo] = useState(false);
 
@@ -40,7 +42,7 @@ export default function ProductCard({ producto }: Props) {
     >
       {/* Imagen */}
       <div className="relative w-full bg-gray-50 overflow-hidden" style={{ height: "160px" }}>
-        <Image
+        <ImagenProducto
           src={imagenSrc}
           alt={`${producto.nombre} — ${producto.categoria.nombre} en Pasto, Nariño`}
           fill

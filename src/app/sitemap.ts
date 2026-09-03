@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getCategorias, getProductos } from "@/lib/api";
+import { getCategorias, getTodosLosProductos } from "@/lib/api";
 import { urlProducto, urlCategoria } from "@/lib/utils";
 
 const BASE = "https://compuservicessoft.com";
@@ -52,10 +52,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   /* Páginas de productos — cargamos hasta 500 para el sitemap */
   let paginasProductos: MetadataRoute.Sitemap = [];
   try {
-    const data = await getProductos(0, 500, "id,asc");
-    paginasProductos = data.content.map((p) => ({
+    // El catálogo público ordena por nombre y no expone fecha de modificación, así
+    // que el `lastModified` sale de la fecha estable por id: cambiarla en cada
+    // despliegue le enseña a Google que la señal no vale nada.
+    const productos = await getTodosLosProductos();
+    paginasProductos = productos.map((p) => ({
       url: `${BASE}${urlProducto(p.nombre, p.categoria.nombre)}`,
-      lastModified: p.updatedAt ? new Date(p.updatedAt) : fechaEstableParaId(p.id, ahora),
+      lastModified: fechaEstableParaId(p.id, ahora),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));

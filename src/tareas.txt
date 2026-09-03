@@ -1,1 +1,0 @@
-Crear imágenes OG únicas para cada servicio, actualmente todas usan local.webp

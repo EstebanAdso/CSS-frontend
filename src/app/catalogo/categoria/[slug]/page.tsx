@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!cat) return { title: "Categoría | CompuServicesSoft" };
 
   const titulo = `${cat.nombre} en Pasto, Nariño | CompuServicesSoft`;
-  const descripcion = `Compra ${cat.nombre} en Pasto, Nariño al mejor precio. ${cat.descripcion ?? "Productos originales con garantía."} Visita CompuServicesSoft en el CC San Agustín, Local 224A.`;
+  const descripcion = `Compra ${cat.nombre} en Pasto, Nariño al mejor precio. Productos originales con garantía. Visita CompuServicesSoft en el CC San Agustín, Local 224A.`;
   const canonical = `https://compuservicessoft.com${urlCategoriaFiltro(cat.nombre)}`;
   const ogImage = "https://compuservicessoft.com/imagenes/local.webp";
 
@@ -57,7 +57,8 @@ export default async function CategoriaFiltroPage({ params, searchParams }: Prop
   const { slug } = await params;
   const sp = await searchParams;
   const page = sp.page ? Math.max(0, Number(sp.page) - 1) : 0;
-  const PAGE_SIZE = 12;
+  /* El mismo tamaño con el que pagina Zentivy: la mitad de páginas para ver lo mismo. */
+  const PAGE_SIZE = 24;
 
   let categoriasData: Categoria[] = [];
   let categoriaActiva: Categoria | null = null;
@@ -164,7 +165,7 @@ export default async function CategoriaFiltroPage({ params, searchParams }: Prop
             {categoriaActiva && (
               <div className="mb-4 text-center">
                 <p className="text-sm text-gray-600 max-w-3xl mx-auto">
-                  {categoriaActiva.descripcion || `Encuentra los mejores ${categoriaActiva.nombre.toLowerCase()} en Pasto. 
+                  {`Encuentra los mejores ${categoriaActiva.nombre.toLowerCase()} en Pasto. 
                   ${totalElements > 0 ? `${totalElements} producto${totalElements !== 1 ? "s" : ""} disponible${totalElements !== 1 ? "s" : ""}` : "Productos"} con garantía. 
                   ¡Envíos en Pasto y Nariño!`}
                 </p>

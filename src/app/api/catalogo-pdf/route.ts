@@ -1,6 +1,21 @@
 import { NextResponse } from "next/server";
+import { getTodosLosProductos } from "@/lib/api";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8085";
+/* Generar este HTML pagina el catalogo entero contra Zentivy: una llamada por
+   cada 48 productos. Sin cache, cada visita —o cada bot— repite ese abanico
+   completo contra el backend. Es un catalogo para imprimir: diez minutos de
+   frescura le sobran, y bajan el peor caso a seis regeneraciones por hora.
+
+   El numero se le pasa tambien a `getTodosLosProductos`: Next se queda con el
+   revalidate MAS CORTO entre el de la ruta y el de sus fetch, asi que declararlo
+   solo aqui no serviria de nada —las llamadas a productos caducan a los dos
+   minutos y arrastrarian la ruta con ellas—. Diez minutos y no una hora porque
+   ese es el piso real: cada pagina de productos pide en paralelo la cabecera del
+   catalogo, que se cachea `TTL_CABECERA` = 600s.
+
+   Next exige un literal en `revalidate` (lo lee sin ejecutar el modulo), asi que
+   el literal vive aqui y la llamada de abajo lo reusa. */
+export const revalidate = 600;
 
 function formatPrecio(valor: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -11,29 +26,9 @@ function formatPrecio(valor: number): string {
   }).format(valor);
 }
 
-/* Trae todos los productos paginando hasta el final */
-async function getTodosLosProductos() {
-  const PAGE_SIZE = 100;
-  let page = 0;
-  let allProducts: { nombre: string; precioVendido: number; cantidad: number; categoria: { id: number; nombre: string } }[] = [];
-
-  while (true) {
-    const res = await fetch(
-      `${BASE_URL}/api/products?page=${page}&size=${PAGE_SIZE}&sort=nombre,asc`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) break;
-    const data = await res.json();
-    allProducts = allProducts.concat(data.content);
-    if (data.last || data.content.length === 0) break;
-    page++;
-  }
-  return allProducts;
-}
-
 export async function GET() {
   try {
-    const productos = await getTodosLosProductos();
+    const productos = await getTodosLosProductos(revalidate);
 
     /* Agrupar por categoría preservando el orden de aparición (que viene por ID desde la API) */
     const porCategoriaMap = new Map<number, { nombre: string; productos: typeof productos }>();
