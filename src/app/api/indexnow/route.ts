@@ -23,11 +23,15 @@ export async function POST(req: NextRequest) {
    * stripear el header Authorization antes de que llegue al handler.
    * -------------------------------------------------------------------- */
   const secret = process.env.INDEXNOW_ROUTE_SECRET;
-  if (secret) {
-    const key = req.headers.get("x-api-key") ?? "";
-    if (key !== secret) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!secret) {
+    /* Sin secreto configurado la ruta queda abierta a cualquiera, asi que
+       cierra en vez de abrir: mejor un deploy sin IndexNow que un endpoint
+       que cualquiera pueda disparar. */
+    console.error("[IndexNow] INDEXNOW_ROUTE_SECRET no esta configurado");
+    return NextResponse.json({ error: "Not configured" }, { status: 503 });
+  }
+  if (req.headers.get("x-api-key") !== secret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   /* --- Parse body -------------------------------------------------------- */
