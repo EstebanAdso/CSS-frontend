@@ -24,7 +24,6 @@ const POSTERS = { start: 0, final: Math.round((12.5 - LOOP_START) * FPS) };
 
 const PROFILES = {
   1080: { h264: 23 },
-  720: { h264: 25 },
 };
 
 mkdirSync(DEST, { recursive: true });

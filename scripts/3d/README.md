@@ -20,7 +20,7 @@ Requisitos: [Blender](https://www.blender.org) 5.x y [FFmpeg](https://ffmpeg.org
 #   BLENDER="D:/Esteban/Tools/blender-5.2.3-windows-x64/blender.exe"
 #   FFMPEG="ruta/a/ffmpeg.exe"
 npm run 3d:build    # modelo (~15 s)
-npm run 3d:render   # fotogramas 1080 y 720 (~30 min con GPU)
+npm run 3d:render   # fotogramas 1080 a 60 fps (~45 min con GPU)
 npm run 3d:encode   # videos y pósters (~2 min)
 ```
 

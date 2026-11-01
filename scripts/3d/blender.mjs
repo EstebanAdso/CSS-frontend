@@ -14,7 +14,7 @@ const task = process.argv[2];
 if (task === "build") {
   run("build_pc.py", join(dir, "out"));
 } else if (task === "render") {
-  for (const size of process.argv.slice(3).length ? process.argv.slice(3) : ["1080", "720"]) run("render_video.py", size);
+  for (const size of process.argv.slice(3).length ? process.argv.slice(3) : ["1080"]) run("render_video.py", size);
 } else {
   console.error("Uso: node scripts/3d/blender.mjs <build|render> [tamaños…]");
   process.exit(1);

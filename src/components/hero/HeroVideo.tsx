@@ -10,7 +10,9 @@ import { STEPS, stepAtVideoTime } from "./buildTimeline";
    así que va fluido en cualquier equipo. https://jakearchibald.com/2024/video-with-transparency/
    ─────────────────────────────────────────────────────────────────────────── */
 
-type Size = "720" | "1080";
+/* Una sola resolución: 1080 px. Las pantallas de celular tienen 2–3× de densidad,
+   así que también la necesitan para verse nítidas (720 se veía borroso). */
+type Size = "1080";
 const poster = (kind: "start" | "final", size: Size) => `/video/hero-pc-${kind}-${size}.webp`;
 
 const VERT = `attribute vec2 p; varying vec2 uv;
@@ -64,7 +66,7 @@ function createRenderer(canvas: HTMLCanvasElement, video: HTMLVideoElement, maxS
   gl.clearColor(0, 0, 0, 0);
 
   const resize = () => {
-    const px = Math.min(Math.round(canvas.clientWidth * Math.min(window.devicePixelRatio || 1, 2)), maxSize);
+    const px = Math.min(Math.round(canvas.clientWidth * Math.min(window.devicePixelRatio || 1, 3)), maxSize);
     if (px > 0 && canvas.width !== px) {
       canvas.width = canvas.height = px;
       gl.viewport(0, 0, px, px);
@@ -95,14 +97,14 @@ export default function HeroVideo({ onStep }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const tiltRef = useRef<HTMLDivElement>(null);
-  const [mode, setMode] = useState<{ size: Size; src: string | null; still: boolean }>({ size: "720", src: null, still: false });
+  const [mode, setMode] = useState<{ size: Size; src: string | null; still: boolean }>({ size: "1080", src: null, still: false });
   const [drawing, setDrawing] = useState(false);
 
   /* Elegir tamaño y formato en el cliente */
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    const size: Size = window.matchMedia("(min-width: 768px)").matches ? "1080" : "720";
+    const size: Size = "1080";
     const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches || !!nav.connection?.saveData;
     const id = requestAnimationFrame(() => {
