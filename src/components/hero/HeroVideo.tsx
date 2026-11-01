@@ -105,9 +105,9 @@ export default function HeroVideo({ onStep }: Props) {
     const size: Size = window.matchMedia("(min-width: 768px)").matches ? "1080" : "720";
     const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches || !!nav.connection?.saveData;
-    const webm = video.canPlayType('video/webm; codecs="vp9"') !== "";
     const id = requestAnimationFrame(() => {
-      setMode({ size, still, src: still ? null : `/video/hero-pc-${size}.${webm ? "webm" : "mp4"}` });
+      /* Siempre H.264: todos los celulares lo decodifican por hardware (VP9 no, y da tirones) */
+      setMode({ size, still, src: still ? null : `/video/hero-pc-${size}.mp4` });
       if (still) onStep?.(STEPS.length); // imagen final: equipo armado y encendido
     });
     return () => cancelAnimationFrame(id);
