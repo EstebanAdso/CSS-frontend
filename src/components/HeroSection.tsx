@@ -160,12 +160,14 @@ export default function HeroSection() {
                 "radial-gradient(closest-side at 68% 74%, rgba(0,229,255,0.06), transparent 100%)",
             }}
           />
-          {/* Caja cuadrada: en móvil más grande que la pantalla (los márgenes del video son
-              transparentes) para que el PC ocupe casi el ancho del título; desde sm, el cuadrado
-              más grande que cabe en la columna */}
-          <div className="absolute inset-x-0 top-0 bottom-9 sm:bottom-0 grid place-items-center [container-type:size]">
+          {/* Caja cuadrada. En el video el contenido está centrado en x (48–49 %) y ocupa
+              en y del 7 % al 84 %; en móvil el cuadrado es mayor que la pantalla (los márgenes
+              son transparentes): el gabinete llena casi todo el ancho sin salirse del alto, y
+              translate centra el contenido. Se centra con left/top 50 % + translate: un ítem de
+              grid más grande que su celda se alinea al inicio y se correría a la derecha. */}
+          <div className="absolute inset-x-0 top-0 bottom-9 sm:bottom-0 [container-type:size]">
             <div
-              className="relative shrink-0 size-[min(116vw,118cqh)] -translate-x-[5%] sm:translate-x-0 sm:size-[min(100cqw,100cqh)]"
+              className="absolute left-1/2 top-1/2 size-[min(140vw,116cqh)] -translate-x-[49%] -translate-y-[42%] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:size-[min(100cqw,100cqh)]"
               style={{
                 /* Solo un desvanecido en el último 6 % del borde: las piezas que entran
                    volando desde fuera del encuadre no se cortan en seco */
