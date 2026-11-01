@@ -200,7 +200,7 @@ export default function Home() {
       <ServiciosSection />
       <GoogleReviews />
       <Footer />
-      <WhatsAppFloat />
+      <WhatsAppFloat hideOverHero />
     </main>
   );
 }

@@ -13,10 +13,37 @@ const WSP_ICON = (
   </svg>
 );
 
-export default function WhatsAppFloat({ hideGlobalPhone = false }: { hideGlobalPhone?: boolean } = {}) {
+type Props = {
+  hideGlobalPhone?: boolean;
+  /** Oculto mientras se ve el hero (#hero); aparece con animación al salir de él */
+  hideOverHero?: boolean;
+};
+
+export default function WhatsAppFloat({ hideGlobalPhone = false, hideOverHero = false }: Props = {}) {
   const [hover, setHover] = useState(false);
   const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(!hideOverHero);
   const ref = useRef<HTMLDivElement>(null);
+
+  /* Mostrar solo cuando el hero ya casi salió de pantalla (queda menos del 20 % visible) */
+  useEffect(() => {
+    if (!hideOverHero) return;
+    const hero = document.getElementById("hero");
+    if (!hero) {
+      const id = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(id);
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const fuera = !entry.isIntersecting || entry.intersectionRatio < 0.2;
+        setVisible(fuera);
+        if (!fuera) setOpen(false);
+      },
+      { threshold: [0, 0.2, 0.5, 1] },
+    );
+    io.observe(hero);
+    return () => io.disconnect();
+  }, [hideOverHero]);
 
   const activeNumeros = hideGlobalPhone
     ? NUMEROS.filter((n) => !n.label.includes("317 403 4349"))
@@ -32,7 +59,14 @@ export default function WhatsAppFloat({ hideGlobalPhone = false }: { hideGlobalP
   }, [open]);
 
   return (
-    <div ref={ref} className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div
+      ref={ref}
+      aria-hidden={!visible}
+      inert={!visible}
+      className={`fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 origin-bottom-right transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none ${
+        visible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-6 scale-75 pointer-events-none"
+      }`}
+    >
 
       {/* Popover tipo nube — aparece encima del botón, alineado a la derecha */}
       {open && (
@@ -101,11 +135,13 @@ export default function WhatsAppFloat({ hideGlobalPhone = false }: { hideGlobalP
           </div>
         </button>
 
-        {/* Pulso animado */}
-        <span
-          className="absolute right-0 bottom-0 w-14 h-14 rounded-full animate-ping opacity-30 pointer-events-none"
-          style={{ background: "var(--color-whatsapp)" }}
-        />
+        {/* Pulso animado (solo mientras el botón está visible) */}
+        {visible && (
+          <span
+            className="absolute right-0 bottom-0 w-14 h-14 rounded-full animate-ping opacity-30 pointer-events-none"
+            style={{ background: "var(--color-whatsapp)" }}
+          />
+        )}
       </div>
     </div>
   );

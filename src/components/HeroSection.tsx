@@ -42,7 +42,7 @@ export default function HeroSection() {
   const [step, setStep] = useState(0);
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#07000d]">
+    <section id="hero" className="relative min-h-screen overflow-hidden bg-[#07000d]">
       {/* ── Fondo: brillo de marca, rejilla técnica y pistas de PCB ── */}
       <div
         className="absolute inset-0"
@@ -185,7 +185,7 @@ export default function HeroSection() {
           <div className="hidden sm:block absolute sm:left-4 sm:bottom-6 lg:-left-10 xl:-left-16">
             <BuildHud step={step} />
           </div>
-          <div className="sm:hidden absolute left-6 right-24 bottom-2">
+          <div className="sm:hidden absolute left-6 right-6 bottom-2">
             <BuildBar step={step} />
           </div>
         </div>
