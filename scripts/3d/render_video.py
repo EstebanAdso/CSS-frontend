@@ -27,7 +27,7 @@ SIZE = int(ARGS[0]) if ARGS else 1080
 PREVIEW = "preview" in ARGS
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "out")
-FPS = 30
+FPS = 60
 
 # ─── Línea de tiempo (idéntica a la versión web) ─────────────────────────────
 
@@ -542,6 +542,7 @@ def key(sock_or_obj, path, frame):
     sock_or_obj.keyframe_insert(path, frame=frame)
 
 
+fan_turn = 0.0  # giro acumulado de los ventiladores (integral de la potencia)
 for frame in range(N + 1):
     t = LOOP_START + frame / FPS
     time = frame / FPS
@@ -569,9 +570,10 @@ for frame in range(N + 1):
         key(ob, "scale", frame)
 
     for i, f in enumerate(fans):
-        ang = -(0.5 * time + 24 * sum(power(LOOP_START + j / FPS) for j in range(frame)) / FPS) if frame else 0
+        ang = -(0.5 * time + 24 * fan_turn)
         f.matrix_basis = fan_base[i] @ Matrix.Rotation(ang, 4, FAN_AXIS)
         key(f, "rotation_quaternion", frame)
+    fan_turn += power(t) / FPS
 
     for em, (phase, strength) in rgb:
         em.inputs["Color"].default_value = (*brand_rgb(time * 0.12 + phase), 1)

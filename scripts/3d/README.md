@@ -7,7 +7,7 @@ Todo se genera por código y no hace falta abrir Blender a mano.
 |---|---|
 | `build_pc.py` (+ `pc_lib.py`, `pc_textures.py`) | Modela placa, CPU, refrigeración, RAM, SSD, GPU, fuente y gabinete, y exporta `out/pc-build.raw.glb` |
 | `render_video.py` | Anima el ensamblaje y renderiza los fotogramas con Eevee (color + canal alfa) |
-| `encode.mjs` | Codifica los videos *stacked alpha* (WebM/MP4) y los pósters en `public/video/` |
+| `encode.mjs` | Codifica los videos *stacked alpha* (MP4 H.264, 60 fps) y los pósters en `public/video/` |
 | `blender.mjs` | Lanza Blender en modo consola |
 | `assets/` | HDRI de estudio (Poly Haven, CC0) |
 

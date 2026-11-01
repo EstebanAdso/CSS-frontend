@@ -3,7 +3,7 @@
 //
 // Entrada:  scripts/3d/out/frames_<N>/0000.png   color premultiplicado (incluye el halo del bloom)
 //           scripts/3d/out/alpha_<N>/*.png        canal alfa en escala de grises
-// Salida:   public/video/hero-pc-<N>.{webm,mp4}   (1.5N × N) → color N×N + alfa N/2×N/2 arriba a la derecha
+// Salida:   public/video/hero-pc-<N>.mp4   H.264, 60 fps, (1.5N × N) → color N×N + alfa N/2×N/2 arriba a la derecha
 //           public/video/hero-pc-{start,final}-<N>.webp   pósters con transparencia real
 //
 // Los navegadores no reproducen video con alfa de forma uniforme (Safari no soporta VP9 con alfa),
@@ -17,14 +17,14 @@ import { join } from "node:path";
 const ROOT = join(import.meta.dirname, "out");
 const DEST = join(import.meta.dirname, "..", "..", "public", "video");
 const FFMPEG = process.env.FFMPEG || "ffmpeg";
-const FPS = 30;
+const FPS = 60;
 const LOOP_START = 0.5;
 /* Pósters: inicio del loop y equipo armado y encendido dentro del gabinete (t = 12.5 s) */
 const POSTERS = { start: 0, final: Math.round((12.5 - LOOP_START) * FPS) };
 
 const PROFILES = {
-  1080: { vp9: 33, h264: 23 },
-  720: { vp9: 35, h264: 25 },
+  1080: { h264: 23 },
+  720: { h264: 25 },
 };
 
 mkdirSync(DEST, { recursive: true });
@@ -62,9 +62,6 @@ for (const [size, q] of Object.entries(PROFILES)) {
   const count = readdirSync(colorDir).filter((f) => f.endsWith(".png")).length;
   const input = ["-framerate", String(FPS), "-i", color.pattern, "-framerate", String(FPS), "-i", alpha.pattern];
 
-  const webm = join(DEST, `hero-pc-${size}.webm`);
-  run([...input, "-filter_complex", STACK, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", String(q.vp9),
-    "-row-mt", "1", "-deadline", "good", "-cpu-used", "1", "-g", String(FPS * 2), ...COLOR_TAGS, "-an", webm]);
 
   const mp4 = join(DEST, `hero-pc-${size}.mp4`);
   run([...input, "-filter_complex", STACK, "-c:v", "libx264", "-preset", "slow", "-crf", String(q.h264),
@@ -78,5 +75,5 @@ for (const [size, q] of Object.entries(PROFILES)) {
       "-c:v", "libwebp", "-quality", "85", out]);
   }
 
-  console.log(`✓ ${size}px · ${count} fotogramas · webm ${kb(webm)} · mp4 ${kb(mp4)}`);
+  console.log(`✓ ${size}px · ${count} fotogramas · mp4 ${kb(mp4)}`);
 }
