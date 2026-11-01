@@ -73,7 +73,7 @@ export default function HeroSection() {
         <CircuitPattern />
       </div>
 
-      <div className="relative z-10 container-site px-4 sm:px-6 lg:px-8 pt-[6.5rem] short:pt-20 pb-3 sm:pt-28 sm:pb-24 lg:pt-24 lg:pb-16 min-h-[100dvh] flex flex-col sm:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] sm:items-center gap-2 sm:gap-4 lg:gap-6">
+      <div className="relative z-10 container-site px-4 sm:px-6 lg:px-8 pt-[6.5rem] short:pt-20 pb-3 sm:pt-28 sm:pb-24 lg:pt-24 lg:pb-16 min-h-[var(--app-h,100dvh)] flex flex-col sm:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] sm:items-center gap-2 sm:gap-4 lg:gap-6">
         {/* ── Columna de texto ── */}
         <div className="relative z-10 text-center lg:text-left">
           {/* Badge ubicación */}

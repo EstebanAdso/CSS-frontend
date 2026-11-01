@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 /* Celulares de poca altura (iPhone SE/6/7/8, Android compactos): el hero usa una
-   versión compacta para que el ensamblaje tenga espacio dentro de 100dvh */
-@custom-variant short (@media (max-width: 639px) and (max-height: 720px));
+   versión compacta para que el ensamblaje tenga espacio en una pantalla. Lo decide el
+   alto real medido con JS (data-short en <html>, ver layout.tsx), no una media query:
+   en la PWA instalada las media queries de altura fallan al recargar. */
+@custom-variant short (&:where([data-short], [data-short] *));
 
 /* ─── Tokens de diseño — CompuServicesSoft ───────────────────────────────────
    Para cambiar el color principal del sitio basta con editar --color-primary.

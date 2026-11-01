@@ -190,6 +190,16 @@ export const metadata: Metadata = {
   manifest: "/favicon/site.webmanifest",
 };
 
+/* Alto real de la ventana para el hero en celulares.
+   En la PWA instalada (modo standalone), al recargar, Android puede calcular 100dvh y las
+   media queries de altura con un alto distinto al visible (las barras del sistema aún no se
+   asientan): el hero quedaba más alto que la pantalla y el gabinete más grande.
+   window.innerHeight sí refleja el área visible. Se mide antes del primer pintado y se
+   vuelve a medir cuando la ventana cambia.
+   - --app-h: alto visible en px (el hero lo usa en vez de 100dvh)
+   - data-short: celular de poca altura → versión compacta del hero (variante `short`) */
+const VIEWPORT_SCRIPT = `(function(){var d=document.documentElement;function m(){var h=window.innerHeight;if(!h)return;d.style.setProperty('--app-h',h+'px');if(window.innerWidth<640&&h<=720)d.setAttribute('data-short','');else d.removeAttribute('data-short')}m();addEventListener('resize',m);addEventListener('orientationchange',m);addEventListener('pageshow',m);if(window.visualViewport)visualViewport.addEventListener('resize',m);setTimeout(m,250);setTimeout(m,1000)})()`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -306,8 +316,10 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="es">
+    /* suppressHydrationWarning: el script de abajo agrega --app-h y data-short a <html> antes de hidratar */
+    <html lang="es" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: VIEWPORT_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
