@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# modelo 3D sin comprimir (modelo y fotogramas intermedios: npm run 3d:build / 3d:render)
+scripts/3d/out/
+__pycache__/

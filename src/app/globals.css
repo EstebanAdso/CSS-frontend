@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Celulares de poca altura (iPhone SE/6/7/8, Android compactos): el hero usa una
+   versión compacta para que el ensamblaje tenga espacio dentro de 100dvh */
+@custom-variant short (@media (max-width: 639px) and (max-height: 720px));
+
 /* ─── Tokens de diseño — CompuServicesSoft ───────────────────────────────────
    Para cambiar el color principal del sitio basta con editar --color-primary.
    Los demás tokens se derivan de él o son independientes.

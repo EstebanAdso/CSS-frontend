@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "3d:build": "node scripts/3d/blender.mjs build",
+    "3d:render": "node scripts/3d/blender.mjs render",
+    "3d:encode": "node scripts/3d/encode.mjs"
   },
   "dependencies": {
     "next": "16.1.6",
